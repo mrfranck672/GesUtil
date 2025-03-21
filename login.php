@@ -1,48 +1,3 @@
-<?php
-session_start(); // Toujours en premier
-
-require 'conn.php'; // Vérifie que ce fichier contient bien la connexion PDO
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = trim($_POST['email']);
-    $password = $_POST['password'];
-
-    // Préparer la requête SQL pour récupérer l'utilisateur
-
-    $stmt = $pdo->prepare("SELECT * FROM user WHERE emailuser = ?");
-    $stmt->execute([$email]); 
-    $user = $stmt->fetch();
-
-    if ($user) {
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['user'] = $user['emailuser'];
-            header("Location: Client/acceuilCli.php");
-            exit();
-        } else {
-            $error = " Mot de passe incorrect ";
-        }
-    } else {
-        $error = " Aucun compte trouvé avec cet email ";
-    }
-    
-
-    if (password_verify($password, $user['password'])) {
-        $_SESSION['user'] = $user['emailuser'];
-    
-        // Récupérer l'IP du client
-        $ip = $_SERVER['REMOTE_ADDR'];
-    
-        // Insérer dans l'historique des connexions
-        $stmt = $pdo->prepare("INSERT INTO sessions (user_id, login_time, logout_time) VALUES (?, ?, ?)");
-        $stmt->execute([$user_id, $login_time, $logout_time]);
-    
-        header("Location: Client/acceuilCli.php");
-        exit();
-    }
-    
-}
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -56,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="bg-white p-8 rounded-lg shadow-lg w-96">
         <h2 class="text-2xl font-bold text-center text-gray-700 mb-6"> Connexion </h2>
-        <form action="login.php" method="POST">
+        <form action="ControllerLogin.php" method="POST">
 
             <div class="mb-4">
                 <label for="email" class="block text-gray-600 text-sm font-medium mb-2"> Email </label>
