@@ -39,7 +39,6 @@ $historique = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <td class="border p-2"><?= htmlspecialchars($log['user_id']); ?></td>
                         <td class="border p-2"><?= htmlspecialchars($log['login_time']); ?></td>
                         <td class="border p-2"><?= htmlspecialchars($log['logout_time']); ?></td>
-                        <td class="border p-2"><?= $log['date_connexion']; ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

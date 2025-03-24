@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : ven. 21 mars 2025 à 02:10
+-- Généré le : lun. 24 mars 2025 à 04:02
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.0.30
 
@@ -46,6 +46,14 @@ CREATE TABLE `role` (
   `nom_role` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+--
+-- Déchargement des données de la table `role`
+--
+
+INSERT INTO `role` (`id`, `nom_role`) VALUES
+(1, 'Utilisateur'),
+(2, 'Admin');
+
 -- --------------------------------------------------------
 
 --
@@ -56,8 +64,16 @@ CREATE TABLE `sessions` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `login_time` timestamp NOT NULL DEFAULT current_timestamp(),
-  `logout_time` timestamp NULL DEFAULT NULL
+  `logout_time` timestamp NULL DEFAULT NULL,
+  `ip_address` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Déchargement des données de la table `sessions`
+--
+
+INSERT INTO `sessions` (`id`, `user_id`, `login_time`, `logout_time`, `ip_address`) VALUES
+(1, 23, '2025-03-24 03:00:36', NULL, '::1');
 
 -- --------------------------------------------------------
 
@@ -74,6 +90,13 @@ CREATE TABLE `user` (
   `status` enum('Active','Inactive','','') NOT NULL DEFAULT 'Active',
   `createdat` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Déchargement des données de la table `user`
+--
+
+INSERT INTO `user` (`id_user`, `username`, `emailuser`, `password`, `role_id`, `status`, `createdat`) VALUES
+(23, 'Landrine', 'karene@gmail.com', '$2y$10$H5gDNokaMkVN5qwGCy2ofu0BbzzKSj2mhQynSG2yr6aa56o2vLOFO', 2, 'Active', '2025-03-24 02:53:27');
 
 --
 -- Index pour les tables déchargées
@@ -113,25 +136,25 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT pour la table `client`
 --
 ALTER TABLE `client`
-  MODIFY `idclt` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idclt` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT pour la table `role`
 --
 ALTER TABLE `role`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT pour la table `sessions`
 --
 ALTER TABLE `sessions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- Contraintes pour les tables déchargées

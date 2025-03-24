@@ -2,13 +2,13 @@
 require '../conn.php';
 session_start();
 
-// Vérifier si l'utilisateur est connecté (ajouter un contrôle admin si nécessaire)
+// Vérifie si l'utilisateur est connecté
 if (!isset($_SESSION['user'])) {
     header("Location: ../login.php");
     exit();
 }
 
-// Récupérer tous les utilisateurs
+// Récupération de  tous les utilisateurs
 $stmt = $pdo->query("SELECT id_user, username, emailuser, role_id, status FROM user");
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -17,12 +17,25 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <!-- <title>Tableau de Bord</title> -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function performAction(userId) {
+            var action = document.getElementById("action_" + userId).value;
+            if (action) {
+                if (action === "delete" && !confirm("Voulez-vous supprimer cet utilisateur ?")) {
+                    return;
+                }
+                window.location.href = action + ".php?id=" + userId;
+            }
+        }
+    </script>
 </head>
-<p class="flex justify-end"> Ajouter un nouveau utilisateur <br> <button class="bg-blue-500 text-white px-3 py-1 rounded"> + </button> </p>
+
 <body class="bg-gray-100 p-10">
-    <h1 class="text-3xl text-center mb-6"> Liste des Utilisateurs </h1>
+    <div class="flex justify-between mb-6">
+        <h1 class="text-3xl"> Liste des Utilisateurs </h1>
+        <button id="openModalButton" class="bg-blue-500 text-white px-4 py-2 rounded-lg"> + Ajouter un utilisateur </button>
+    </div>
 
     <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
         <thead class="bg-blue-500 text-white">
@@ -37,19 +50,74 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </thead>
         <tbody>
             <?php foreach ($users as $user): ?>
-            <tr class="border-b">
+            <tr class="border-b text-center">
                 <td class="px-4 py-2"><?= $user['id_user'] ?></td>
                 <td class="px-4 py-2"><?= htmlspecialchars($user['username']) ?></td>
                 <td class="px-4 py-2"><?= htmlspecialchars($user['emailuser']) ?></td>
-                <td class="px-4 py-2"><?= htmlspecialchars($user['role_id']) ?></td>
-                <td class="px-4 py-2"><?= htmlspecialchars($user['status'] )?></td>
+                <td class="px-4 py-2"><?= ($user['role_id'] == 1) ? "Admin" : "Utilisateur" ?></td>
                 <td class="px-4 py-2">
-                    <a href="modif.php?id=<?= $user['id_user'] ?>" class="bg-yellow-500 text-white px-3 py-1 rounded">Modifier</a>
-                    <a href="suppControler.php?id=<?= $user['id_user'] ?>" class="bg-red-500 text-white px-3 py-1 rounded" onclick="return confirm(' Voulez Supprimer cet utilisateur ?')"> Supprimer </a>
+                    <?= $user['status'] == 1 ? "<span class='text-green-500'>Actif</span>" : "<span class='text-red-500'>Inactif</span>" ?>
+                </td>
+                <td class="px-4 py-2">
+                    <select id="action_<?= $user['id_user'] ?>" class="px-2 py-1 border rounded">
+                        <option value=""> Sélectionner une action </option>
+                        <option value="modif"> Modifier </option>
+                        <option value="delete"> Supprimer </option>
+                        <option value="status"><?= $user['status'] == 1 ? "Désactiver" : "Activer" ?></option>
+                    </select>
+                    <button onclick="performAction(<?= $user['id_user'] ?>)" class="bg-gray-600 text-white px-3 py-1 rounded ml-2"> Exécuter </button>
                 </td>
             </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
+
+      <!-- Modal -->
+      <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 class="text-xl font-bold mb-4">Ajouter un utilisateur</h2>
+            <form action="acceuilAdm.php" method="POST" id="addUserForm">
+                <div class="mb-4">
+                    <label for="username" class="block text-gray-700">Nom</label>
+                    <input type="text" name="username" id="username" required class="w-full p-2 border rounded-lg">
+                </div>
+
+                <div class="mb-4">
+                    <label for="email" class="block text-gray-700">Email</label>
+                    <input type="email" name="emailuser" id="email" required class="w-full p-2 border rounded-lg">
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="block text-gray-700">Mot de passe</label>
+                    <input type="password" name="password" id="password" required class="w-full p-2 border rounded-lg">
+                </div>
+
+                <div class="mb-4">
+                    <label for="role" class="block text-gray-700">Rôle</label>
+                    <select name="role_id" id="role" required class="w-full p-2 border rounded-lg">
+                        <option value="1">Admin</option>
+                        <option value="2">Utilisateur</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Ajouter</button>
+            </form>
+
+            <button id="closeModalButton" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg">Fermer</button>
+        </div>
+    </div>
+
+    <script>
+        // Ouvrir le modal
+        document.getElementById('openModalButton').addEventListener('click', function() {
+            document.getElementById('userModal').classList.remove('hidden');
+        });
+
+        // Fermer le modal
+        document.getElementById('closeModalButton').addEventListener('click', function() {
+            document.getElementById('userModal').classList.add('hidden');
+        });
+    </script>
+
 </body>
 </html>

@@ -37,7 +37,7 @@ if (!isset($_SESSION['user'])) {
         <a href="HistCon.php" class="text-sm/6 font-semibold text-gray-900"> Acceder au Profil </a>
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-        <a href="logout.php" class="text-sm/6 font-semibold text-gray-900"> Déconnexion <span aria-hidden="true">&rarr;</span></a>
+        <a href="../ControllerLogin.php?logout=true" class="text-sm/6 font-semibold text-gray-900"> Déconnexion <span aria-hidden="true">&rarr;</span></a>
       </div>
     </nav>
 
@@ -73,7 +73,9 @@ if (!isset($_SESSION['user'])) {
     </div>
   </header>
 
-  <h1 class= font-bold> Bienvenue a la maison <?= $_SESSION['user']; ?> ! </h1>
+  <h1 class= font-bold> 
+    <?= "Bienvenue à la maison, " . htmlspecialchars($_SESSION['user'] ['email']) . " !" ?>
+  </h1>
 
 </body>
 </html>
