@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Inscription </title>
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Identifier le rôle lors de l'inscription -->
     <script>
         function checkRole() {
             var role = document.getElementById("role").value;
@@ -14,50 +16,10 @@
     </script>
 </head>
 
-<?php
-require 'conn.php';
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = trim($_POST['username']);
-    $emailuser = trim($_POST['emailuser']);
-    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-    $role = $_POST['role']; // admin ou user
-    $admin_code = isset($_POST['admin_code']) ? trim($_POST['admin_code']) : null;
-
-    $role_id = 2; // Rôle "Utilisateur" par défaut
-    $status = 1;
-    $createdat = date('Y-m-d H:i:s');
-
-    if (!$username || !$emailuser || !$_POST['password']) {
-        die("Tous les champs sont obligatoires !");
-    }
-
-    if (!filter_var($emailuser, FILTER_VALIDATE_EMAIL)) {
-        die("Adresse email invalide !");
-    }
-
-    // Vérification du rôle
-    if ($role === "admin") {
-        if ($admin_code !== "1234") { // Code secret à changer
-            die("Code Admin incorrect !");
-        }
-        $role_id = 1; // Rôle "Admin"
-    }
-
-    $stmt = $pdo->prepare("INSERT INTO user (username, emailuser, password, role_id, status, createdat) VALUES (?, ?, ?, ?, ?, ?)");
-    if ($stmt->execute([$username, $emailuser, $password, $role_id, $status, $createdat])) {
-        header("Location: login.php");
-        exit();
-    } else {
-        echo "Erreur lors de l'inscription";
-    }
-}
-?>
-
 <body class="bg-green-100 flex items-center justify-center h-screen">
     <div class="bg-white p-8 rounded-lg shadow-lg w-96">
         <h2 class="text-2xl font-bold text-center text-gray-700 mb-2"> Formulaire d'inscription </h2>
-        <form action="inscription.php" method="POST">
+        <form action="inscriptionController.php" method="POST">
 
             <div class="mb-2">
                 <label class="block text-gray-600 text-sm font-medium mb-2"> Nom </label>

@@ -18,15 +18,12 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
+
     <script>
-        function performAction(userId) {
-            var action = document.getElementById("action_" + userId).value;
-            if (action) {
-                if (action === "delete" && !confirm("Voulez-vous supprimer cet utilisateur ?")) {
-                    return;
-                }
-                window.location.href = action + ".php?id=" + userId;
-            }
+        function checkRole() {
+            var role = document.getElementById("role").value;
+            var adminCodeField = document.getElementById("adminCodeField");
+            adminCodeField.style.display = (role == "admin") ? "block" : "none";
         }
     </script>
 </head>
@@ -62,11 +59,11 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <select id="action_<?= $user['id_user'] ?>" class="px-2 py-1 border rounded">
                         <option value=""> Sélectionner une action </option>
                         <option value="modif"> Modifier </option>
-                        <option value="delete"> Supprimer </option>
+                        <option value="suppControler"> Supprimer </option>
                         <option value="status"><?= $user['status'] == 1 ? "Désactiver" : "Activer" ?></option>
                     </select>
                     <button onclick="performAction(<?= $user['id_user'] ?>)" class="bg-gray-600 text-white px-3 py-1 rounded ml-2"> Exécuter </button>
-                </td>
+                </td> 
             </tr>
             <?php endforeach; ?>
         </tbody>
@@ -75,8 +72,8 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <!-- Modal -->
       <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
         <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 class="text-xl font-bold mb-4">Ajouter un utilisateur</h2>
-            <form action="acceuilAdm.php" method="POST" id="addUserForm">
+            <h2 class="text-xl font-bold mb-4"> Ajouter un utilisateur </h2>
+            <form action="AddController.php" method="POST" id="addUserForm">
                 <div class="mb-4">
                     <label for="username" class="block text-gray-700">Nom</label>
                     <input type="text" name="username" id="username" required class="w-full p-2 border rounded-lg">
@@ -93,12 +90,17 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
 
                 <div class="mb-4">
-                    <label for="role" class="block text-gray-700">Rôle</label>
-                    <select name="role_id" id="role" required class="w-full p-2 border rounded-lg">
-                        <option value="1">Admin</option>
-                        <option value="2">Utilisateur</option>
-                    </select>
-                </div>
+                <label class="block text-gray-600 text-sm font-medium mb-2"> Rôle </label>
+                <select name="role" id="role" onchange="checkRole()" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                    <option value="user"> Utilisateur </option>
+                    <option value="admin"> Admin </option>
+                </select>
+            </div>
+
+            <div class="mb-2" id="adminCodeField" style="display: none;">
+                <label class="block text-gray-600 text-sm font-medium mb-2"> Code Admin </label>
+                <input type="password" name="admin_code" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
+            </div>
 
                 <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Ajouter</button>
             </form>

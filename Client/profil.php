@@ -8,6 +8,7 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
+
 // Récupérer l'historique des connexions
 $stmt = $pdo->query("SELECT * FROM sessions ORDER BY user_id, login_time, logout_time DESC");
 $historique = $stmt->fetchAll(PDO::FETCH_ASSOC);
