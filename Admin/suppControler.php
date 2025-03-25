@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id']) || !isset($_GET['user_id'])) {
     exit();
 }
 
-$id = $_GET['user_id'];
+$id = $_POST['user_id'];
 
 $stmt = $pdo->prepare("DELETE FROM user WHERE user_id = ?");
 if ($stmt->execute([$id])) {
